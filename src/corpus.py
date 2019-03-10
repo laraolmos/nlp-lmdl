@@ -23,15 +23,13 @@ class LMDL_Corpus():
 		dir_list_files = sorted(os.listdir(self.input_path))
 		original_text = {}
 		processed_text = {}
-		vocabulary = []
+		vocabulary = set()
 		for file_name in dir_list_files:
 			original_text[file_name] = self.text_extractor.extract_html_file_content(self.input_path + file_name)
 			document_terms = self.text_normalizer.normalize_token_list(self.text_tokenizer.words(original_text[file_name]))
 			processed_text[file_name] = document_terms
-			for token in processed_text[file_name]:
-				if token not in vocabulary:
-					vocabulary.append(token)
-		return original_text, vocabulary, processed_text
+			vocabulary.union(set(processed_text[file_name]))
+		return original_text, list(vocabulary), processed_text
 
 	def sentences(self, doc_name):
 		return self.text_tokenizer.sentences(self.corpus[doc_name])
